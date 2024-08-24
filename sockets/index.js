@@ -1,4 +1,4 @@
-const authMiddleware = require('../middlewares/authMiddleware');
+const authMiddleware = require('../utils/middlewares/authSocketMiddleware');
 
 const socketBuilder = (io) => {
     io.use(authMiddleware);
