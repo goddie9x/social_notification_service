@@ -1,6 +1,6 @@
 const kafka = require('kafka-node');
 const { createTopicIfNotExists } = require('../utils/kafka');
-const { KAFKA_TOPICS } = require('../constants/kafka');
+const { KAFKA_TOPICS } = require('../utils/constants/kafka');
 
 const kafkaClient = new kafka.KafkaClient({ kafkaHost: process.env.KAFKA_CLIENT_HOST });
 const KafkaConsumer = kafka.Consumer;

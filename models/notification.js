@@ -1,5 +1,5 @@
 const mongoose = require('../configs/database');
-const NOTIFICATION = require('../constants/notification');
+const NOTIFICATION = require('../utils/constants/notification');
 const Schema = mongoose.Schema;
 
 const NotificationSchema = new Schema({
