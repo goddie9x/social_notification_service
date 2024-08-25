@@ -1,7 +1,7 @@
 const Notification = require('../models/notification');
 
 class NotificationService {
-    setSocket(io){
+    setSocket(io) {
         this.io = io;
     }
     async getNotificationByUserIdWithPagination(payloads) {
@@ -11,7 +11,7 @@ class NotificationService {
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(parseInt(limit))
-        const getAmountUnreadNotificationPromise = Notification.countDocument({ read: false });
+        const getAmountUnreadNotificationPromise = Notification.countDocuments({ target: userId, read: false });
 
         const [notifications, amountUnreadNotification]
             = await Promise.all([getNotificationByUserIdWithPaginationPromise, getAmountUnreadNotificationPromise]);
@@ -27,7 +27,9 @@ class NotificationService {
         const notification = new Notification(payloads);
 
         await notification.save();
-        io.to(payloads.target).emit('new-notifications', notification);
+        const targetNotificationRoom = payloads.target.toString();
+        console.log(targetNotificationRoom);
+        this.io.to(targetNotificationRoom).emit('new-notifications', notification);
         return notification;
     }
     async createMultipleNotifications(notificationsPayload) {
@@ -42,7 +44,7 @@ class NotificationService {
         }, {});
 
         for (const [userId, userNotifications] of Object.entries(notificationsByUser)) {
-            io.to(userId).emit('new-notifications', userNotifications);
+            this.io.to(userId).emit('new-notifications', userNotifications);
         }
 
         return notifications;
