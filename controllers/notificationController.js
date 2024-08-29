@@ -14,6 +14,19 @@ class NotificationController extends BasicController {
             return this.handleResponseError(res, error);
         }
     }
+    async read(req,res){
+        const payloads = {
+            userId: req.body.currentUser.userId,
+            id: req.params.id
+        };
+        
+        try{
+            await notificationService.read(payloads);
+        }
+        catch(error){
+            return this.handleResponseError(error);
+        }
+    }
 }
 
 module.exports = new NotificationController();

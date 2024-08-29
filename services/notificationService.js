@@ -32,8 +32,8 @@ class NotificationService {
         this.io.to(targetNotificationRoom).emit('new-notifications', notification);
         return notification;
     }
-    async createMultipleNotifications(notificationsPayload) {
-        const notifications = await Notification.insertMany(notificationsPayload);
+    async createMultipleNotifications(payloads) {
+        const notifications = await Notification.insertMany(payloads);
 
         const notificationsByUser = notifications.reduce((acc, notification) => {
             if (!acc[notification.target]) {
@@ -48,6 +48,15 @@ class NotificationService {
         }
 
         return notifications;
+    }
+    async read(payloads) {
+        const { userId, id } = payloads;
+        const notification = Notification.findOneAndUpdate({
+            _id: id,
+            target: userId
+        }, { read: true });
+        
+        return notification;
     }
 }
 
