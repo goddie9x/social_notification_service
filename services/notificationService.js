@@ -50,13 +50,16 @@ class NotificationService {
         return notifications;
     }
     async read(payloads) {
-        const { userId, id } = payloads;
-        const notification = Notification.findOneAndUpdate({
-            _id: id,
-            target: userId
-        }, { read: true });
-        
-        return notification;
+        const { userId, ids } = payloads;
+        const result = await Notification.updateMany(
+            { 
+                _id: { $in: ids },
+                target: userId
+            }, 
+            { $set: { read: true } }
+        );
+    
+        return result; 
     }
 }
 

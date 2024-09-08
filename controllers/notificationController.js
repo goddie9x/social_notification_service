@@ -17,11 +17,11 @@ class NotificationController extends BasicController {
     async read(req,res){
         const payloads = {
             userId: req.body.currentUser.userId,
-            id: req.params.id
+            ids: req.body.ids
         };
-        
         try{
-            await notificationService.read(payloads);
+            const result = await notificationService.read(payloads);
+            return res.json(result);
         }
         catch(error){
             return this.handleResponseError(error);
