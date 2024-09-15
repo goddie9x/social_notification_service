@@ -13,9 +13,10 @@ const initKafkaTopics = async () => {
         console.log(error);
     }
 }
-initKafkaTopics();
 
-const activeNotificationServiceConsumer = () => {
+
+const activeNotificationServiceConsumer = async () => {
+    await initKafkaTopics();
     activeServiceConsumer({
         kafkaClient,
         serviceInstance: notificationService,

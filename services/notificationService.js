@@ -1,9 +1,6 @@
 const Notification = require('../models/notification');
-
+const { pushNewNotificationToSocketGateway } = require('../kafka/producer');
 class NotificationService {
-    setSocket(io) {
-        this.io = io;
-    }
     async getNotificationByUserIdWithPagination(payloads) {
         const { userId, page, limit } = payloads;
         const skip = (page - 1) * limit;
@@ -27,9 +24,10 @@ class NotificationService {
         const notification = new Notification(payloads);
 
         await notification.save();
-        const targetNotificationRoom = payloads.target.toString();
-        console.log(targetNotificationRoom);
-        this.io.to(targetNotificationRoom).emit('new-notifications', notification);
+        pushNewNotificationToSocketGateway({
+            message: notification,
+            roomId: payloads.target.toString()
+        });
         return notification;
     }
     async createMultipleNotifications(payloads) {
@@ -44,22 +42,24 @@ class NotificationService {
         }, {});
 
         for (const [userId, userNotifications] of Object.entries(notificationsByUser)) {
-            this.io.to(userId).emit('new-notifications', userNotifications);
+            pushNewNotificationToSocketGateway({
+                message: userNotifications,
+                roomId: userId
+            });
         }
-
         return notifications;
     }
     async read(payloads) {
         const { userId, ids } = payloads;
         const result = await Notification.updateMany(
-            { 
+            {
                 _id: { $in: ids },
                 target: userId
-            }, 
+            },
             { $set: { read: true } }
         );
-    
-        return result; 
+
+        return result;
     }
 }
 
