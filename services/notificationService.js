@@ -9,7 +9,6 @@ class NotificationService {
             .skip(skip)
             .limit(parseInt(limit))
         const getAmountUnreadNotificationPromise = Notification.countDocuments({ target: userId, read: false });
-
         const [notifications, amountUnreadNotification]
             = await Promise.all([getNotificationByUserIdWithPaginationPromise, getAmountUnreadNotificationPromise]);
 
