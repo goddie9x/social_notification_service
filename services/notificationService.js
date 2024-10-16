@@ -1,8 +1,7 @@
 const Notification = require('../models/notification');
 const { pushNewNotificationToSocketGateway } = require('../kafka/producer');
 class NotificationService {
-    async getNotificationByUserIdWithPagination(payloads) {
-        const { userId, page, limit } = payloads;
+    async getNotificationByUserIdWithPagination({ userId, page, limit }) {
         const skip = (page - 1) * limit;
         const getNotificationByUserIdWithPaginationPromise = Notification.find({ target: userId })
             .sort({ createdAt: -1 })
@@ -48,8 +47,7 @@ class NotificationService {
         }
         return notifications;
     }
-    async read(payloads) {
-        const { userId, ids } = payloads;
+    async read({ userId, ids }) {
         const result = await Notification.updateMany(
             {
                 _id: { $in: ids },
